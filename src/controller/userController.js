@@ -37,6 +37,7 @@ const loginUser = async function(req,res) {
                 userId: user._id.toString(),
                 batch: "Uranium",
                 organisation: "FunctionUp",
+                exp: Math.floor(Date.now() / 1000) + (60 * 60) // 1 hour
             },
             "functionUp-Uranium"
         )
