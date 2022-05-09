@@ -22,8 +22,8 @@ let isValidEmail = function (email) {
 }
 
 let isValidPassword = function (password) {
-    let passwordRegex = /^(?=.[a-z])(?=.[A-Z])(?=.\d)(?=.[@$!%?&])[A-Za-z\d@$!%?&]{8,15}$/
-    return passwordRegex.text(password)
+    let passwordRegex = /^(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{8,15}$/
+    return passwordRegex.test(password)
 }
 
 module.exports = { isValidRequestBody, isEmpty, isValidEmail, isValidPhone, isValidPassword }
