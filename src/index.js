@@ -12,7 +12,7 @@ app.use(bodyParser.urlencoded({
 
 mongoose
   .connect(
-    "mongodb+srv://firstDB:zwPu7dwJG0RCXU9f@cluster0.kgij2.mongodb.net/groupXDatabase?retryWrites=true&w=majority", {
+    "mongodb+srv://firstDB:zwPu7dwJG0RCXU9f@cluster0.kgij2.mongodb.net/group54Database?retryWrites=true&w=majority", {
       useNewUrlParser: true,
     }
   )
