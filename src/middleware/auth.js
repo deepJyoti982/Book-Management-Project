@@ -19,6 +19,7 @@ const authenticate = (req, res, next) => {
         }) //if token exp time expired
 
         req.decodeToken = decode
+        //console.log(req.decodeToken)
 
         next()
     } catch (e) {
@@ -37,6 +38,7 @@ const bookAuthorization = async (req, res, next) => {
 
         // check book exist or not
         let validBookId = await booksModel.findById(bookId).catch(err => null)
+        //console.log(validBookId)
         if (!validBookId) return res.status(404).send({
             status: false,
             message: "Book ID invalid no such book found"
@@ -44,9 +46,10 @@ const bookAuthorization = async (req, res, next) => {
 
         // get userId from decoded token
         const userId = req.decodeToken.userId
+        //console.log(userId)
 
         // check authorised user
-        if (validBookId.userId !== userId) return res.status(403).send({
+        if (validBookId.userId.toString() !== userId) return res.status(403).send({
             status: false,
             message: 'Unauthorised user!'
         }) //if Unauthorised user

@@ -14,5 +14,8 @@ router.post("/login", user.loginUser)
 
 // Books
 router.post("/books",authenticate, book.createBook )
+router.put("/books/:bookId",authenticate,bookAuthorization,book.bookUpdate)
+router.delete("/books/:bookId",authenticate,bookAuthorization,book.delBookById)
+
 
 module.exports = router;
