@@ -8,7 +8,7 @@ const registerUser = async (req, res) => {
     try {
         const data = req.body;
         
-        if (!isValidRequestBody(data)) return res.status(404).send({ status: false, message: "Data not found" })
+        if (!isValidRequestBody(data)) return res.status(400).send({ status: false, message: "Data not found" })
 
         let { title, name, phone, email, password, address } = data
 
@@ -47,7 +47,7 @@ const loginUser = async function(req,res) {
     try {
         const loginData = req.body;
 
-        if (!isValidRequestBody(loginData)) return res.status(404).send({ status: false, message: "Login data not found" })
+        if (!isValidRequestBody(loginData)) return res.status(400).send({ status: false, message: "Login data not found" })
         
         const {email,password} = loginData
         

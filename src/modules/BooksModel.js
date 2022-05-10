@@ -8,7 +8,7 @@ const bookSchema = new mongoose.Schema({
         unique: true
     },
     excerpt: {
-        type: string,
+        type: String,
         required: 'Excerpt must be required'
     },
     userId: {
@@ -42,7 +42,7 @@ const bookSchema = new mongoose.Schema({
         default: false
     },
     releasedAt: {
-        type: String,
+        type: Date,
         required:'ReleasedAt must be required'
     },
 }, {
