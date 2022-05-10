@@ -16,6 +16,7 @@ router.post("/login", user.loginUser)
 router.post("/books",authenticate, book.createBook )
 router.put("/books/:bookId",authenticate,bookAuthorization,book.bookUpdate)
 router.delete("/books/:bookId",authenticate,bookAuthorization,book.delBookById)
+router.get('/books',authenticate,book.getBook)
 
 
 module.exports = router;

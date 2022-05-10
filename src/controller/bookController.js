@@ -141,6 +141,35 @@ const createBook = async (req, res) => {
     }
 }
 
+
+
+//=========================================================== Get book api==============================================================
+
+const getBook = async function(req,res) {
+    
+    try {
+        const queryData = req.query;
+    
+        if(Object.keys(queryData).length !== 0) {
+            let findQuery = await BooksModel.find({$and: [{isDeleted: false}, queryData]})
+            if(findQuery.length == 0) {
+                return res.status( 404 ).send({status: false, message: "No such book found"})
+            }
+            res.status( 200 ).send({status: true, data: findQuery})
+        }else {
+            let allBooks = await BooksModel.find({isDeleted: false})
+            if(allBooks.length == 0) return res.status( 404 ).send({status: false, message: "No book found"})
+            res.status( 200 ).send({status: true, data: allBooks})
+        }
+    }
+    catch( error ) {
+        res.status(500).send({ status: false, message: error.message })
+    }
+
+
+}
+
+// Returns all books in the collection that aren't deleted. Return only book _id, title, excerpt, userId, category, releasedAt, reviews field. Response example
 //=========================================================== delete book api==============================================================
 const delBookById = async (req, res) => {
     try {
@@ -240,6 +269,7 @@ const bookUpdate = async (req, res) => {
 module.exports = {
     createBook,
     delBookById,
-    bookUpdate
+    bookUpdate,
+    getBook
 };
 
