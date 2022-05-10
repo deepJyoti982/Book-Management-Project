@@ -37,7 +37,7 @@ const registerUser = async (req, res) => {
         return res.status(201).send({ status: true, message: "User register sucessfully", data: user })
     }
     catch (error) {
-        return res.status(500).send({ status: false, message: err.message })
+        return res.status(500).send({ status: false, message: error.message })
     }
 }
 
@@ -65,15 +65,15 @@ const loginUser = async function(req,res) {
                 userId: user._id.toString(),
                 batch: "Uranium",
                 organisation: "FunctionUp",
-                exp: Math.floor(Date.now() / 1000) + (60 * 60) // 1 hour
+                exp: Math.floor(Date.now() / 1000) + (60 * 60) // 1 hour 1200s | 2500 (60*10) | (60 * min)
             },
             "functionUp-Uranium"
         )
         res.setHeader("x-api-key",token)
-        res.send({status: true, data: token})
+        res.status(200).send({status: true, data: token})
     }
     catch( error ){
-        res.status( 500 ).send({status: false, message: error.message})
+        res.status(500).send({status: false, message: error.message})
     }
 }
 module.exports = { 
