@@ -13,7 +13,8 @@ const registerUser = async (req, res) => {
         let { title, name, phone, email, password, address } = data
 
         if (isEmpty(title)) return res.status(400).send({ status: false, message: "Title is required" })
-
+        if (['Mr','Mrs', 'Miss'].indexOf(title) == -1) return res.status(400).send({ status: false, message: "Title must be Mr, Mrs, Miss" })
+        
         if (isEmpty(name)) return res.status(400).send({ status: false, message: "User name is required" })
 
         if (isEmpty(phone)) return res.status(400).send({ status: false, message: "Phone Number is required" })
