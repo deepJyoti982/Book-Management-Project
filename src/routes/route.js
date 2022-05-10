@@ -13,10 +13,11 @@ router.post("/register", user.registerUser)
 router.post("/login", user.loginUser)
 
 // Books
-router.post("/books",authenticate, book.createBook )
-router.put("/books/:bookId",authenticate,bookAuthorization,book.bookUpdate)
-router.delete("/books/:bookId",authenticate,bookAuthorization,book.delBookById)
-router.get('/books',authenticate,book.getBook)
+router.post("/books", authenticate, book.createBook )
+router.put("/books/:bookId", authenticate, bookAuthorization, book.bookUpdate)
+router.delete("/books/:bookId", authenticate, bookAuthorization, book.delBookById)
+router.get('/books', authenticate, book.getBook)
+router.get('/books/:bookId', authenticate, book.getBookById)
 
 
 module.exports = router;

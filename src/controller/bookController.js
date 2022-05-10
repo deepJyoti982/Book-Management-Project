@@ -154,18 +154,7 @@ const createBook = async (req, res) => {
 }
 
 
-
-
-
-
-
-
-
-
-
-
-
-//=========================================================== Get book api==============================================================
+//============================== Get book api===========================================
 
 const getBook = async function (req, res) {
 
@@ -210,75 +199,65 @@ const getBook = async function (req, res) {
             data: findQuery
         })
 
+    } 
+    catch (error) {
+        res.status(500).send({
+            status: false,
+            message: error.message
+        })
+    }
+}
 
 
+// ============================= Get Book by Id ============================
+
+const getBookById = async (req, res) => {
+    try {
+        const bookId = req.params.bookId
+
+        const data = await BooksModel.findOne({
+            _id: bookId
+        }).catch(e => null)
+
+        if (!data) return res.status(404).send({
+            status: false,
+            message: "Book does not exist"
+        })
+
+        if (data.isDeleted) return res.status(404).send({
+            status: false,
+            message: "Book already deleted"
+        })
+        
+        let obj = {
+            _id: data._id,
+            title: data.title,
+            excerpt: data.excerpt,
+            userId: data.userId,
+            category: data.category,
+            subcategory: data.subcategory,
+            deleted: data.deleted,
+            reviews: data.reviews,
+            deletedAt: data.deletedAt,
+            releasedAt: data.releasedAt,
+            createdAt: data.createdAt,
+            updatedAt: data.updatedAt
+        }
+
+        obj.reviewsData = []
+
+        return res.status(200).send({
+            status: true,
+            message: "Book List",
+            data: obj
+        })
     } catch (error) {
         res.status(500).send({
             status: false,
             message: error.message
         })
     }
-
-
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-// Returns all books in the collection that aren't deleted. Return only book _id, title, excerpt, userId, category, releasedAt, reviews field. Response example
-//=========================================================== delete book api==============================================================
-const delBookById = async (req, res) => {
-    try {
-        let userId = req.decodeToken.userId
-        let bookId = req.params.bookId
-        //check valid book id
-        let validBookId = await BooksModel.findById(bookId).catch(err => null)
-        if (validBookId.isDeleted) return res.status(404).send({
-            status: false,
-            message: "Book is already Deleted"
-        })
-        //Doing changes in book document
-        let deletion = await BooksModel.updateOne({
-            _id: bookId,
-            userId: userId
-        }, {
-            $set: {
-                isDeleted: true,
-                deletedAt: new Date()
-            }
-        }, {
-            new: true
-        })
-        res.status(200).send({
-            status: true,
-            message: 'Success',
-            data: {
-                deletion
-            }
-        })
-    } catch (er) {
-        res.status(500).send({
-            status: false,
-            message: er.message
-        })
-    }
-}
-
-
-
-
-
-
-
 
 
 //==========================================================book update api===========================================================
@@ -362,31 +341,50 @@ const bookUpdate = async (req, res) => {
 
 
 
+//============================= delete book api==========================================
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+const delBookById = async (req, res) => {
+    try {
+        let userId = req.decodeToken.userId
+        let bookId = req.params.bookId
+        //check valid book id
+        let validBookId = await BooksModel.findById(bookId).catch(err => null)
+        if (validBookId.isDeleted) return res.status(404).send({
+            status: false,
+            message: "Book is already Deleted"
+        })
+        //Doing changes in book document
+        let deletion = await BooksModel.updateOne({
+            _id: bookId,
+            userId: userId
+        }, {
+            $set: {
+                isDeleted: true,
+                deletedAt: new Date()
+            }
+        }, {
+            new: true
+        })
+        res.status(200).send({
+            status: true,
+            message: 'Success',
+            data: {
+                deletion
+            }
+        })
+    } catch (er) {
+        res.status(500).send({
+            status: false,
+            message: er.message
+        })
+    }
+}
 
 
 module.exports = {
     createBook,
     delBookById,
     bookUpdate,
-    getBook
+    getBook,
+    getBookById
 };
