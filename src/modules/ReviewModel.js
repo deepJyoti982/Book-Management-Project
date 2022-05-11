@@ -23,9 +23,7 @@ const reviewSchema = new mongoose.Schema({
         max: 5,
         required: "rating is required"
     },
-    review: {
-        Type: String,
-    },
+    review: String,
     isDeleted: {
         type: Boolean,
         default: false
