@@ -22,8 +22,6 @@ const {
 const createBook = async (req, res) => {
     try {
         const data = req.body;
-        const useridfromtoken = req.decodeToken.userId
-        //console.log(req.decodeToken.userId)
 
         if (!isValidRequestBody(data)) return res.status(400).send({
             status: false,
@@ -97,14 +95,6 @@ const createBook = async (req, res) => {
             status: false,
             message: "Enter a proper ISBN"
         })
-
-        // check userid with token user id
-        if (userId !== useridfromtoken) return res.status(401).send({
-            status: false,
-            message: "User un-authorised"
-        })
-
-
 
         // DB Calls
         const isIdExist = await UserModel.findOne({

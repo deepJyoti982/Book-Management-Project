@@ -1,10 +1,13 @@
 const validation = require('../utility/validation')
 const booksModel = require('../modules/BooksModel')
 const jwt = require('jsonwebtoken')
+
+//authentication
+
 const authenticate = (req, res, next) => {
     try {
         // get header key
-        const token = req.headers['x-auth-key'] || req.headers['X-AUTH-KEY']
+        const token = req.headers['x-auth-key'] || req.headers['X-AUTH-KEY'] || req.headers['x-api-key']
         if (validation.isEmpty(token)) return res.status(400).send({
             status: false,
             message: 'token is required!'
@@ -30,6 +33,30 @@ const authenticate = (req, res, next) => {
     }
 }
 
+//user authrization
+
+const userAuthrization = (req, res, next) => {
+    try {
+        //userId from body
+        let userId = req.body.userId
+        //userId from decoded token
+        let tokenUserId = req.decodeToken.userId
+        //checking wheather same or not
+        if (userId !== tokenUserId) return res.status(401).send({
+            status: false,
+            message: "User not Authorised to create a new Book"
+        })
+        next();
+    }
+    catch (e) {
+        res.status(500).send({
+            status: false,
+            message: e.message
+        })
+    }
+}
+
+//book authrization
 
 const bookAuthorization = async (req, res, next) => {
     try {
@@ -71,5 +98,6 @@ const bookAuthorization = async (req, res, next) => {
 
 module.exports = {
     authenticate,
+    userAuthrization,
     bookAuthorization
 }
