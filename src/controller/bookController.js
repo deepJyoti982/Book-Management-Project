@@ -1,5 +1,7 @@
 const BooksModel = require("../modules/BooksModel");
 const UserModel = require("../modules/UserModel");
+const reviewsModel = require("../modules/ReviewModel");
+
 const moment = require('moment')
 
 //destructure of validation.js
@@ -244,7 +246,12 @@ const getBookById = async (req, res) => {
             updatedAt: data.updatedAt
         }
 
-        obj.reviewsData = []
+        // get arr of reviews
+        const reviewArr = await reviewsModel.find({
+            bookId : data._id, isDeleted : false
+        }).select({ __v : 0, isDeleted : 0}).catch(_ => [])
+
+        obj.reviewsData = reviewArr;
 
         return res.status(200).send({
             status: true,

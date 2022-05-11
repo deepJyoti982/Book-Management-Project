@@ -276,8 +276,8 @@ const bookWithReviewLisrt = async (bookId) => {
 
     // get arr of reviews
     const reviewArr = await reviewsModel.find({
-        bookId
-    }).catch(_ => [])
+        bookId, isDeleted : false
+    }).select({ __v : 0, isDeleted : 0}).catch(_ => [])
     output.reviewsData = reviewArr
     return output
 }
