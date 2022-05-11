@@ -15,10 +15,10 @@ router.post("/login", user.loginUser)
 
 // Books
 router.post("/books", authenticate, book.createBook )
-router.put("/books/:bookId", authenticate, bookAuthorization, book.bookUpdate)
-router.delete("/books/:bookId", authenticate, bookAuthorization, book.delBookById)
 router.get('/books', authenticate, book.getBook)
 router.get('/books/:bookId', authenticate, book.getBookById)
+router.put("/books/:bookId", authenticate, bookAuthorization, book.bookUpdate)
+router.delete("/books/:bookId", authenticate, bookAuthorization, book.delBookById)
 
 // Review
 router.post("/books/:bookId/review", review.create )

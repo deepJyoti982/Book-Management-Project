@@ -168,13 +168,13 @@ const getBook = async function (req, res) {
         if (Object.keys(queryData).length !== 0) {
 
             let {
-                title,
+                category,
                 userId,
                 subcategory
             } = queryData;
 
-            if (!isEmpty(title)) {
-                obj.title = title
+            if (!isEmpty(category)) {
+                obj.category = category
             }
             if (!isEmpty(userId)) {
                 obj.userId = userId
@@ -278,6 +278,10 @@ const bookUpdate = async (req, res) => {
             userId: userId
         }).catch(err => null)
         //console.log(validBook)
+        if(!validBook) return res.status(404).send({
+            status: false,
+            message: "Book not found"
+        })
 
         if (validBook.isDeleted) return res.status(404).send({
             status: false,
@@ -317,7 +321,7 @@ const bookUpdate = async (req, res) => {
             if (checkISBN) {
                 return res.status(400).send({
                     status: false,
-                    message: "ISBN is already exits plz enter a new title"
+                    message: "ISBN is already exits plz enter a new ISBN"
                 })
             } else {
                 validBook.ISBN = ISBN
@@ -349,6 +353,10 @@ const delBookById = async (req, res) => {
         let bookId = req.params.bookId
         //check valid book id
         let validBookId = await BooksModel.findById(bookId).catch(err => null)
+        if(!validBookId) return res.status(404).send({
+            status: false,
+            message: "Book not found"
+        })
         if (validBookId.isDeleted) return res.status(404).send({
             status: false,
             message: "Book is already Deleted"
