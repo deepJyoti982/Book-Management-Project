@@ -91,10 +91,11 @@ const createBook = async (req, res) => {
             status: false,
             message: "ISBN required"
         })
+        console.log(isValidISBN)
 
         if (!isValidISBN(ISBN)) return res.status(400).send({
             status: false,
-            message: "ISBN must be number"
+            message: "Enter a proper ISBN"
         })
 
         // check userid with token user id
