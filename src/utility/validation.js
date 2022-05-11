@@ -18,7 +18,7 @@ let isValidPhone = function (number) {
 }
 
 let isValidISBN = function (ISBN) {
-    let ISBNRegex = /^[0-9]*$/          // add [-] in this
+    let ISBNRegex = /^[0-9]*$/          // add [-] in this and add range 13
     return ISBNRegex.test(ISBN);
 }
 
