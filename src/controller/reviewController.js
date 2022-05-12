@@ -23,10 +23,10 @@ const create = async (req, res) => {
         } = revData
 
         // basic validation
-        if (validation.isEmpty(reviewedBy)) return res.status(400).send({
-            status: false,
-            message: 'ReviewedBy is required!'
-        })
+        // if (validation.isEmpty(reviewedBy)) return res.status(400).send({
+        //     status: false,
+        //     message: 'ReviewedBy is required!'
+        // })
 
         if (validation.isEmpty(rating)) return res.status(400).send({
             status: false,
