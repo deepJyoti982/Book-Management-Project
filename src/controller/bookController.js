@@ -214,7 +214,7 @@ const getBookById = async (req, res) => {
 
         if (!data) return res.status(404).send({
             status: false,
-            message: "Book does not exist"
+            message: "Book does not exist or bookID invalid"
         })
 
         if (data.isDeleted) return res.status(404).send({
