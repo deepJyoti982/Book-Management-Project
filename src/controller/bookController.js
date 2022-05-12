@@ -89,11 +89,10 @@ const createBook = async (req, res) => {
             status: false,
             message: "ISBN required"
         })
-        console.log(isValidISBN)
 
         if (!isValidISBN(ISBN)) return res.status(400).send({
             status: false,
-            message: "Enter a proper ISBN"
+            message: "Enter a valid ISBN Number"
         })
 
         // DB Calls
@@ -123,13 +122,13 @@ const createBook = async (req, res) => {
 
         const createBook = await BooksModel.create({
             title,
-            ISBN,
-            releasedAt: moment(releasedAt).format("YYYY-MM-DD"),
-            category,
+            excerpt,
             userId,
+            ISBN,
+            category,
             subcategory,
             reviews,
-            excerpt
+            releasedAt: moment(releasedAt).format("YYYY-MM-DD"),
         })
 
         return res.status(201).send({
@@ -150,7 +149,6 @@ const createBook = async (req, res) => {
 //============================== Get book api===========================================
 
 const getBook = async function (req, res) {
-
     try {
         const queryData = req.query;
 
@@ -161,16 +159,16 @@ const getBook = async function (req, res) {
         if (Object.keys(queryData).length !== 0) {
 
             let {
-                category,
                 userId,
+                category,
                 subcategory
             } = queryData;
 
-            if (!isEmpty(category)) {
-                obj.category = category
-            }
             if (!isEmpty(userId)) {
                 obj.userId = userId
+            }
+            if (!isEmpty(category)) {
+                obj.category = category
             }
             if (!isEmpty(subcategory)) {
                 obj.subcategory = {
@@ -179,7 +177,7 @@ const getBook = async function (req, res) {
             }
         }
 
-        // console.log(obj)
+    
         let findQuery = await BooksModel.find(obj)
         if (findQuery.length == 0) {
             return res.status(404).send({
@@ -360,7 +358,7 @@ const delBookById = async (req, res) => {
             message: "Book is already Deleted"
         })
         //Doing changes in book document
-        let deletion = await BooksModel.updateOne({
+        let deletion = await BooksModel.findOneAndUpdate({
             _id: bookId,
             userId: userId
         }, {
@@ -370,7 +368,7 @@ const delBookById = async (req, res) => {
             }
         }, {
             new: true
-        })
+        }).select({__v : 0})
         res.status(200).send({
             status: true,
             message: 'Success',

@@ -3,7 +3,6 @@ const { isValidRequestBody, isEmpty, isValidPhone, isValidEmail, isValidPassword
 const jwt = require('jsonwebtoken');
 
 
-
 const registerUser = async (req, res) => {
     try {
         const data = req.body;

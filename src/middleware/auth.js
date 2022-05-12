@@ -14,17 +14,27 @@ const authenticate = (req, res, next) => {
         }) //if token is empty
 
         // decode token data
-        const decode = jwt.verify(token, 'functionUp-Uranium')
-        let currentTime = Math.floor(Date.now() / 1000)
-        if (currentTime > decode.exp) return res.status(401).send({
+        let decode;
+        jwt.verify(token, 'functionUp-Uranium', (err, dec) => {
+             if (err) {return res.status(401).send({
             status: false,
-            message: 'Your token has expired'
-        }) //if token exp time expired
+            message: err.message
+        })} else {
+           decode = dec
+        req.decodeToken = decode 
+        next()
+        }
+        
+        })
+        // let currentTime = Math.floor(Date.now() / 1000)
+        // if (currentTime > decode.exp) return res.status(401).send({
+        //     status: false,
+        //     message: 'Your token has expired'
+        // }) //if token exp time expired
 
-        req.decodeToken = decode
         //console.log(req.decodeToken)
 
-        next()
+        
     } catch (e) {
         res.status(500).send({
             status: false,
