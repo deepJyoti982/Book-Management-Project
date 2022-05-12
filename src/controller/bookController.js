@@ -14,11 +14,7 @@ const {
     isValidISBN
 } = require("../utility/validation")
 
-
-/*
-    create book api --------------------------------------------------------------------
-*/
-
+//====================================================[API TO CREATE BOOK]==========================================================
 const createBook = async (req, res) => {
     try {
         const data = req.body;
@@ -39,6 +35,7 @@ const createBook = async (req, res) => {
             excerpt
         } = data;
 
+        //Validations...
         if (isEmpty(releasedAt)) {
             releasedAt = moment(releasedAt).format("YYYY-MM-DD")
         } else {
@@ -120,6 +117,7 @@ const createBook = async (req, res) => {
             message: "ISBN already exist"
         })
 
+        //Book creation
         const createBook = await BooksModel.create({
             title,
             excerpt,
@@ -146,7 +144,7 @@ const createBook = async (req, res) => {
 }
 
 
-//============================== Get book api===========================================
+//==============================[GET BOOK API]==========================================
 
 const getBook = async function (req, res) {
     try {
@@ -200,7 +198,7 @@ const getBook = async function (req, res) {
 }
 
 
-// ============================= Get Book by Id ============================
+// =============================[GET BOOK BY BOOK-ID]============================
 
 const getBookById = async (req, res) => {
     try {
@@ -256,7 +254,7 @@ const getBookById = async (req, res) => {
 }
 
 
-//==========================================================book update api===========================================================
+//==========================================================[BOOK UPDATE API]===========================================================
 const bookUpdate = async (req, res) => {
     try {
         let bookId = req.params.bookId
@@ -273,7 +271,7 @@ const bookUpdate = async (req, res) => {
             _id: bookId,
             userId: userId
         }).catch(err => null)
-        //console.log(validBook)
+        
         if(!validBook) return res.status(404).send({
             status: false,
             message: "Book not found"
@@ -341,7 +339,7 @@ const bookUpdate = async (req, res) => {
 
 
 
-//============================= delete book api==========================================
+//===================================[DELETE BOOK API]==========================================
 
 const delBookById = async (req, res) => {
     try {
@@ -351,7 +349,7 @@ const delBookById = async (req, res) => {
         let validBookId = await BooksModel.findById(bookId).catch(err => null)
         if(!validBookId) return res.status(404).send({
             status: false,
-            message: "Book not found"
+            message: "Book not found or BookId is invalid !"
         })
         if (validBookId.isDeleted) return res.status(404).send({
             status: false,
@@ -369,6 +367,7 @@ const delBookById = async (req, res) => {
         }, {
             new: true
         }).select({__v : 0})
+
         res.status(200).send({
             status: true,
             message: 'Success',

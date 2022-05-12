@@ -18,8 +18,6 @@ let isValidPhone = function (number) {
 }
 
 let isValidISBN = function (ISBN) {
-    // let numbers = ISBN.replaceAll('-', '')
-    // if (numbers.length != 13) return false
     let ISBNRegex = /^[0-9]*$/
     return ISBNRegex.test(ISBN);
 }
