@@ -3,7 +3,7 @@ const booksModel = require('../modules/BooksModel')
 const validation = require('../utility/validation')
 
 
-// POST /books/:bookId/review
+//=====================================================[CREATE REVIEW API]============================================================
 const create = async (req, res) => {
     try {
         // get book id
@@ -21,13 +21,8 @@ const create = async (req, res) => {
             rating,
             review
         } = revData
-
-        // basic validation
-        // if (validation.isEmpty(reviewedBy)) return res.status(400).send({
-        //     status: false,
-        //     message: 'ReviewedBy is required!'
-        // })
-
+        
+        // VALIDATION
         if (validation.isEmpty(rating)) return res.status(400).send({
             status: false,
             message: 'Rating is required!'
@@ -94,8 +89,8 @@ const create = async (req, res) => {
 
 
 
+//=====================================================[UPDATE REVIEW API]============================================================
 
-// PUT /books/:bookId/review/:reviewId | Update the review - review, rating, reviewer's name
 const update = async (req, res) => {
     try {
 
