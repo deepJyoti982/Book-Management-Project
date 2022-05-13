@@ -82,10 +82,7 @@ const create = async (req, res) => {
 
         res.status(200).send({
             status: true,
-            data: {
-                reviewData: result,
-                bookDocument: isBook
-            }
+            data: await bookWithReviewLisrt(bookId)
         })
 
     } catch (e) {
@@ -174,7 +171,7 @@ const update = async (req, res) => {
         await isReview.save()
         res.status(200).send({
             status: true,
-            message: isReview
+            data:  await bookWithReviewLisrt(bookId)
         })
 
     } catch (e) {
