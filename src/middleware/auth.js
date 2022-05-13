@@ -14,28 +14,17 @@ const authenticate = (req, res, next) => {
         }) //if token is empty
 
         // decode token data
-        let decode;
-        jwt.verify(token, 'functionUp-Uranium', (err, dec) => {
-             if (err) {return res.status(401).send({
-            status: false,
-            message: err.message
-        })} else {
-           decode = dec
-        req.decodeToken = decode 
-        next()
-        }
-        
+        jwt.verify(token, 'functionUp-Uranium', (err, decode) => {
+            if (err) {
+                return res.status(401).send({
+                    status: false,
+                    message: err.message
+                })
+            } else {
+                req.decodeToken = decode
+                next()
+            }
         })
-        //dont use this
-        // let currentTime = Math.floor(Date.now() / 1000)
-        // if (currentTime > decode.exp) return res.status(401).send({
-        //     status: false,
-        //     message: 'Your token has expired'
-        // }) //if token exp time expired
-
-        //console.log(req.decodeToken)
-
-        
     } catch (e) {
         res.status(500).send({
             status: false,
@@ -58,8 +47,7 @@ const userAuthrization = (req, res, next) => {
             message: "User not Authorised to create a new Book"
         })
         next();
-    }
-    catch (e) {
+    } catch (e) {
         res.status(500).send({
             status: false,
             message: e.message
