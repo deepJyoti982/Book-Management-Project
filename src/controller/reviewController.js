@@ -123,7 +123,7 @@ const update = async (req, res) => {
         // check if book is deleted
         if (isBook.isDeleted) return res.status(404).send({
             status: false,
-            message: "Book already deleted, can't add review!"
+            message: "Book already deleted, can't update review!"
         })
 
 
@@ -133,6 +133,12 @@ const update = async (req, res) => {
         if (!isReview) return res.status(404).send({
             status: false,
             message: 'Review not found!'
+        })
+
+        // check if ReviewId OR bookId are not related to each other
+        if (isReview.bookId.toString() !== bookId) return res.status(404).send({
+            status: false,
+            message: "ReviewId OR bookId are not related to each other!"
         })
 
         // check if Review is deleted
@@ -171,7 +177,7 @@ const update = async (req, res) => {
         await isReview.save()
         res.status(200).send({
             status: true,
-            data:  await bookWithReviewList(bookId)
+            data: await bookWithReviewList(bookId)
         })
 
     } catch (e) {
@@ -206,7 +212,7 @@ const deleted = async (req, res) => {
         // check if book is deleted
         if (isBook.isDeleted) return res.status(404).send({
             status: false,
-            message: "Book already deleted, can't add review!"
+            message: "Book already deleted, can't delete again!"
         })
 
 
@@ -216,6 +222,12 @@ const deleted = async (req, res) => {
         if (!isReview) return res.status(404).send({
             status: false,
             message: 'Review not found!'
+        })
+
+        // check if ReviewId OR bookId are not related to each other
+        if (isReview.bookId.toString() !== bookId) return res.status(404).send({
+            status: false,
+            message: "ReviewId OR bookId are not related to each other!"
         })
 
         // check if Review is deleted
@@ -273,8 +285,12 @@ const bookWithReviewList = async (bookId) => {
 
     // get arr of reviews
     const reviewArr = await reviewsModel.find({
-        bookId, isDeleted : false
-    }).select({ __v : 0, isDeleted : 0}).catch(_ => [])
+        bookId,
+        isDeleted: false
+    }).select({
+        __v: 0,
+        isDeleted: 0
+    }).catch(_ => [])
     output.reviewsData = reviewArr
     return output
 }

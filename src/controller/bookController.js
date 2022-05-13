@@ -365,10 +365,7 @@ const delBookById = async (req, res) => {
 
         res.status(200).send({
             status: true,
-            message: 'Success',
-            data: {
-                deletion
-            }
+            message: 'Book deleted successfully'
         })
     } catch (er) {
         res.status(500).send({
