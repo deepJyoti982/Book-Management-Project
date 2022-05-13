@@ -82,7 +82,7 @@ const create = async (req, res) => {
 
         res.status(200).send({
             status: true,
-            data: await bookWithReviewLisrt(bookId)
+            data: await bookWithReviewList(bookId)
         })
 
     } catch (e) {
@@ -171,7 +171,7 @@ const update = async (req, res) => {
         await isReview.save()
         res.status(200).send({
             status: true,
-            data:  await bookWithReviewLisrt(bookId)
+            data:  await bookWithReviewList(bookId)
         })
 
     } catch (e) {
@@ -254,7 +254,7 @@ const deleted = async (req, res) => {
 
 // ⭕⭕⭕⭕⭕⭕⭕⭕⭕⭕⭕⭕⭕⭕⭕⭕⭕⭕⭕⭕⭕⭕⭕⭕⭕⭕⭕⭕⭕⭕
 // book doc with review arr 👉 use if required
-const bookWithReviewLisrt = async (bookId) => {
+const bookWithReviewList = async (bookId) => {
     const bookDoc = await booksModel.findById(bookId).catch(_ => null)
     let output = {
         _id: bookDoc._id,
