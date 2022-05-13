@@ -176,7 +176,7 @@ const getBook = async function (req, res) {
         }
 
     
-        let findQuery = await BooksModel.find(obj)
+        let findQuery = await BooksModel.find(obj).select({__v:0})
         if (findQuery.length == 0) {
             return res.status(404).send({
                 status: false,
@@ -321,7 +321,7 @@ const bookUpdate = async (req, res) => {
                 validBook.ISBN = ISBN
             }
         }
-        validBook.save();
+        await validBook.save();
         res.status(200).send({
             status: true,
             message: "Update succesful",

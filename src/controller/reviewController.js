@@ -234,7 +234,7 @@ const deleted = async (req, res) => {
         // decress 1 from book's reviews
         let dec = isBook.reviews - 1;
         isBook.reviews = dec
-        isBook.save();
+        await isBook.save();
 
 
 
