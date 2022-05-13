@@ -1,5 +1,4 @@
 const BooksModel = require("../modules/BooksModel");
-const UserModel = require("../modules/UserModel");
 const reviewsModel = require("../modules/ReviewModel");
 
 const moment = require('moment')
