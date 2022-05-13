@@ -1,5 +1,6 @@
 const validation = require('../utility/validation')
 const booksModel = require('../modules/BooksModel')
+const UserModel=require('../modules/UserModel')
 const jwt = require('jsonwebtoken')
 
 //authentication
@@ -35,13 +36,23 @@ const authenticate = (req, res, next) => {
 
 //user authrization
 
-const userAuthrization = (req, res, next) => {
+const userAuthrization = async (req, res, next) => {
     try {
         //userId from body
         let userId = req.body.userId
         //userId from decoded token
         let tokenUserId = req.decodeToken.userId
-        //checking wheather same or not
+
+        //checking if userId is present in DB
+        const isIdExist = await UserModel.findOne({
+            _id: userId
+        }).catch(e => null);
+        if (!isIdExist) return res.status(404).send({
+            status: false,
+            message: "User Id does not exist"
+        })
+
+        //checking valid token userid 
         if (userId !== tokenUserId) return res.status(401).send({
             status: false,
             message: "User not Authorised to create a new Book"

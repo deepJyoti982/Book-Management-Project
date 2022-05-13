@@ -92,14 +92,7 @@ const createBook = async (req, res) => {
         })
 
         // DB Calls
-        const isIdExist = await UserModel.findOne({
-            _id: userId
-        }).catch(e => null);
-        if (!isIdExist) return res.status(404).send({
-            status: false,
-            message: "User Id does not exist"
-        })
-
+        
         const isTitleUnique = await BooksModel.findOne({
             title
         }).catch(e => null);
