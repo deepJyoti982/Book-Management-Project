@@ -9,6 +9,7 @@ const reviewSchema = new mongoose.Schema({
     },
     reviewedBy: {
         type: String,
+        trim:true,
         required: "reviewed by is required",
         default: "Guest",
         value: "Number",
@@ -23,7 +24,10 @@ const reviewSchema = new mongoose.Schema({
         max: 5,
         required: "rating is required"
     },
-    review: String,
+    review: {
+        type:String,
+        trim:true,
+    },
     isDeleted: {
         type: Boolean,
         default: false
