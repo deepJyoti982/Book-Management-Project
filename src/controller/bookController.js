@@ -31,7 +31,6 @@ const createBook = async (req, res) => {
             category,
             userId,
             subcategory,
-            reviews,
             excerpt
         } = data;
 
@@ -125,7 +124,6 @@ const createBook = async (req, res) => {
             ISBN,
             category,
             subcategory,
-            reviews,
             releasedAt: moment(releasedAt).format("YYYY-MM-DD"),
         })
 
@@ -175,8 +173,10 @@ const getBook = async function (req, res) {
             }
         }
 
-    
-        let findQuery = await BooksModel.find(obj)
+
+        let findQuery = await BooksModel.find(obj).select({
+            __v: 0
+        })
         if (findQuery.length == 0) {
             return res.status(404).send({
                 status: false,
@@ -188,8 +188,7 @@ const getBook = async function (req, res) {
             data: findQuery
         })
 
-    } 
-    catch (error) {
+    } catch (error) {
         res.status(500).send({
             status: false,
             message: error.message
@@ -217,7 +216,7 @@ const getBookById = async (req, res) => {
             status: false,
             message: "Book already deleted"
         })
-        
+
         let obj = {
             _id: data._id,
             title: data.title,
@@ -235,8 +234,12 @@ const getBookById = async (req, res) => {
 
         // get arr of reviews
         const reviewArr = await reviewsModel.find({
-            bookId : data._id, isDeleted : false
-        }).select({ __v : 0, isDeleted : 0}).catch(_ => [])
+            bookId: data._id,
+            isDeleted: false
+        }).select({
+            __v: 0,
+            isDeleted: 0
+        }).catch(_ => [])
 
         obj.reviewsData = reviewArr;
 
@@ -271,8 +274,8 @@ const bookUpdate = async (req, res) => {
             _id: bookId,
             userId: userId
         }).catch(err => null)
-        
-        if(!validBook) return res.status(404).send({
+
+        if (!validBook) return res.status(404).send({
             status: false,
             message: "Book not found"
         })
@@ -347,7 +350,7 @@ const delBookById = async (req, res) => {
         let bookId = req.params.bookId
         //check valid book id
         let validBookId = await BooksModel.findById(bookId).catch(err => null)
-        if(!validBookId) return res.status(404).send({
+        if (!validBookId) return res.status(404).send({
             status: false,
             message: "Book not found or BookId is invalid !"
         })
@@ -366,7 +369,9 @@ const delBookById = async (req, res) => {
             }
         }, {
             new: true
-        }).select({__v : 0})
+        }).select({
+            __v: 0
+        })
 
         res.status(200).send({
             status: true,
