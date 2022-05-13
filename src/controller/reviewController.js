@@ -109,7 +109,7 @@ const update = async (req, res) => {
         // dataForUpdate is valid or not
         if (!validation.isValidRequestBody(dataForUpdate)) return res.status(400).send({
             status: false,
-            message: "Body is required!"
+            message: "Data for updation is required!"
         })
 
         // check book from db ---
@@ -138,7 +138,7 @@ const update = async (req, res) => {
         // check if ReviewId OR bookId are not related to each other
         if (isReview.bookId.toString() !== bookId) return res.status(404).send({
             status: false,
-            message: "ReviewId OR bookId are not related to each other!"
+            message: "ReviewId does not belong to particular book !"
         })
 
         // check if Review is deleted
@@ -227,7 +227,7 @@ const deleted = async (req, res) => {
         // check if ReviewId OR bookId are not related to each other
         if (isReview.bookId.toString() !== bookId) return res.status(404).send({
             status: false,
-            message: "ReviewId OR bookId are not related to each other!"
+            message: "ReviewId does not belong to particular book !"
         })
 
         // check if Review is deleted

@@ -91,7 +91,7 @@ const createBook = async (req, res) => {
         })
 
         // DB Calls
-        
+
         const isTitleUnique = await BooksModel.findOne({
             title
         }).catch(e => null);
@@ -165,8 +165,8 @@ const getBook = async function (req, res) {
             }
         }
 
-    
-        let findQuery = await BooksModel.find(obj).select({__v:0})
+
+        let findQuery = await BooksModel.find(obj).select({ __v: 0 })
         if (findQuery.length == 0) {
             return res.status(404).send({
                 status: false,
@@ -355,7 +355,8 @@ const delBookById = async (req, res) => {
         }, {
             $set: {
                 isDeleted: true,
-                deletedAt: new Date()
+                deletedAt: new Date(),
+                reviews:0
             }
         }, {
             new: true
@@ -363,9 +364,13 @@ const delBookById = async (req, res) => {
             __v: 0
         })
 
+        // Deletion of reviews if book is deleted
+        if (deletion) {
+            await reviewsModel.updateMany({ bookId }, { $set: { isDeleted: true } })
+        }
         res.status(200).send({
             status: true,
-            message: 'Book deleted successfully'
+            message: 'Book deleted successfully '
         })
     } catch (er) {
         res.status(500).send({
