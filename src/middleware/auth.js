@@ -26,6 +26,7 @@ const authenticate = (req, res, next) => {
         }
         
         })
+        //dont use this
         // let currentTime = Math.floor(Date.now() / 1000)
         // if (currentTime > decode.exp) return res.status(401).send({
         //     status: false,

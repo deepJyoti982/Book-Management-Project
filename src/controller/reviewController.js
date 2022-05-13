@@ -68,7 +68,7 @@ const create = async (req, res) => {
             // increment 1 and save book
             let inc = isBook.reviews + 1;
             isBook.reviews = inc
-            isBook.save();
+            await isBook.save();
         }
 
         const result = {
@@ -171,7 +171,7 @@ const update = async (req, res) => {
         }
 
         // update review Data by using .save()
-        isReview.save()
+        await isReview.save()
         res.status(200).send({
             status: true,
             message: isReview
@@ -229,12 +229,12 @@ const deleted = async (req, res) => {
 
         // apply delete review
         isReview.isDeleted = true
-        isReview.save()
+        await isReview.save()
 
         // decress 1 from book's reviews
         let dec = isBook.reviews - 1;
         isBook.reviews = dec
-        isBook.save();
+        await isBook.save();
 
 
 
