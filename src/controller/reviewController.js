@@ -78,14 +78,6 @@ const create = async (req, res) => {
             await isBook.save();
         }
 
-        const result = {
-            _id: reviewData._id,
-            bookId: reviewData.bookId,
-            reviewedBy: reviewData.reviewedBy,
-            reviewedAt: reviewData.reviewedAt,
-            rating: reviewData.rating,
-            review: reviewData.review
-        }
 
         res.status(200).send({
             status: true,
