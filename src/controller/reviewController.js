@@ -39,6 +39,13 @@ const create = async (req, res) => {
             message: 'Rating must be in 1 to 5!'
         })
 
+        if (Object.keys(revData).indexOf("review") !== -1) {
+            if (validation.isEmpty(review)) return res.status(404).send({
+                status: false,
+                message: "Declared review is empty, You need to add some value"
+            })
+        }
+
         // check book from db ---
         const isBook = await booksModel.findById(bookId).catch(_ => null)
         // check if exist or not
