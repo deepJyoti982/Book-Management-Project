@@ -15,14 +15,20 @@ const create = async (req, res) => {
             message: 'body is required for create review!'
         })
 
-        // De structure
-        const {
+        // Destructure
+        let {
             reviewedBy,
             rating,
             review
         } = revData
-        
+
         // VALIDATION
+        if (Object.keys(revData).indexOf("reviewedBy") !== -1) {
+            if (validation.isEmpty(reviewedBy)) {
+                reviewedBy = "Guest"
+            }
+        }
+
         if (validation.isEmpty(rating)) return res.status(400).send({
             status: false,
             message: 'Rating is required!'
