@@ -74,7 +74,7 @@ const create = async (req, res) => {
         }
 
 
-        res.status(200).send({
+        res.status(201).send({
             status: true,
             data: await bookWithReviewList(bookId)
         })
@@ -175,7 +175,6 @@ const update = async (req, res) => {
         })
 
     } catch (e) {
-        console.log(e)
         res.status(500).send({
             status: false,
             message: e.message
@@ -187,7 +186,8 @@ const update = async (req, res) => {
 
 
 
-// DELETE /books/:bookId/review/:reviewId
+//=====================================================[DELETE REVIEW API]============================================================
+
 const deleted = async (req, res) => {
     try {
         // get book id
@@ -206,7 +206,7 @@ const deleted = async (req, res) => {
         // check if book is deleted
         if (isBook.isDeleted) return res.status(404).send({
             status: false,
-            message: "Book already deleted, can't delete again!"
+            message: "Book already deleted !"
         })
 
 

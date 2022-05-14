@@ -23,7 +23,7 @@ const createBook = async (req, res) => {
             message: "Body Empty"
         })
 
-        const {
+        let {
             title,
             ISBN,
             releasedAt,
@@ -358,8 +358,6 @@ const delBookById = async (req, res) => {
                 deletedAt: new Date(),
                 reviews:0
             }
-        }, {
-            new: true
         }).select({
             __v: 0
         })
