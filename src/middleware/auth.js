@@ -1,6 +1,6 @@
 const validation = require('../utility/validation')
 const booksModel = require('../modules/BooksModel')
-const UserModel=require('../modules/UserModel')
+const UserModel = require('../modules/UserModel')
 const jwt = require('jsonwebtoken')
 
 //authentication
@@ -42,7 +42,11 @@ const userAuthrization = async (req, res, next) => {
         let userId = req.body.userId
         //userId from decoded token
         let tokenUserId = req.decodeToken.userId
-
+        //checking if userId coming from body or not.
+        if (!userId) return res.status(400).send({
+            status: false,
+            message: "Please mention a proper User Id"
+        })
         //checking if userId is present in DB
         const isIdExist = await UserModel.findOne({
             _id: userId

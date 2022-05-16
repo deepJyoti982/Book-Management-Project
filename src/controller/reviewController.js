@@ -35,17 +35,20 @@ const create = async (req, res) => {
         })
 
         // Rating must be in 1 to 5
+        if (typeof rating !== 'number') return res.status(400).send({ Status: false, message: "rating must be number only" })
         if (rating < 1 || rating > 5) return res.status(400).send({
             status: false,
             message: 'Rating must be in 1 to 5!'
         })
 
-        if (Object.keys(revData).indexOf("review") !== -1) {
-            if (validation.isEmpty(review)) return res.status(404).send({
-                status: false,
-                message: "Declared review is empty, You need to add some value"
-            })
-        }
+      //
+            if (validation.isEmpty(review)) {
+                return res.status(404).send({
+                    status: false,
+                    message: "Declared review is empty, You need to add some value"
+                })
+            }
+        
 
         // check book from db ---
         const isBook = await booksModel.findById(bookId).catch(_ => null)
@@ -76,7 +79,7 @@ const create = async (req, res) => {
             // increment 1 and save book
             let inc = isBook.reviews + 1;
             isBook.reviews = inc
-            await isBook.save();
+            await isBook.save();//The save() method is asynchronous, so it returns a promise that you can await on.
         }
 
 
@@ -123,7 +126,7 @@ const update = async (req, res) => {
         // check if book is deleted
         if (isBook.isDeleted) return res.status(404).send({
             status: false,
-            message: "Book already deleted, can't update review!"
+            message: "Book already deleted, can't create a review!"
         })
 
 
@@ -159,6 +162,8 @@ const update = async (req, res) => {
             isReview.review = review
         }
 
+        // review validation
+        if (typeof rating !== 'number') return res.status(400).send({ Status: false, message: "rating must be number only" })
         if (!validation.isEmpty(rating)) {
             // Rating must be in 1 to 5
             if (rating < 1 || rating > 5) return res.status(400).send({
