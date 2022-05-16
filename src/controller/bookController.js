@@ -167,6 +167,11 @@ const getBook = async function (req, res) {
 
 
         let findQuery = await BooksModel.find(obj).select({
+            ISBN:0,
+            subcategory:0,
+            isDeleted:0,
+            createdAt:0,
+            updatedAt:0,
             __v: 0
         }).sort({
             title: 1
