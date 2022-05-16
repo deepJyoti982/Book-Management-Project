@@ -166,7 +166,11 @@ const getBook = async function (req, res) {
         }
 
 
-        let findQuery = await BooksModel.find(obj).select({ __v: 0 })
+        let findQuery = await BooksModel.find(obj).select({
+            __v: 0
+        }).sort({
+            title: 1
+        })
         if (findQuery.length == 0) {
             return res.status(404).send({
                 status: false,
@@ -356,7 +360,7 @@ const delBookById = async (req, res) => {
             $set: {
                 isDeleted: true,
                 deletedAt: new Date(),
-                reviews:0
+                reviews: 0
             }
         }).select({
             __v: 0
@@ -364,7 +368,13 @@ const delBookById = async (req, res) => {
 
         // Deletion of reviews if book is deleted
         if (deletion) {
-            await reviewsModel.updateMany({ bookId }, { $set: { isDeleted: true } })
+            await reviewsModel.updateMany({
+                bookId
+            }, {
+                $set: {
+                    isDeleted: true
+                }
+            })
         }
         res.status(200).send({
             status: true,
