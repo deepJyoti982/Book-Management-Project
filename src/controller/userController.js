@@ -65,7 +65,7 @@ const loginUser = async function (req, res) {
         //DB call for checking user is valid user
         const user = await UserModel.findOne({ email: email, password: password })
         if (!user) {
-            return res.status(400).send({ status: false, message: "Email or Password is not correct" })
+            return res.status(401).send({ status: false, message: "Email or Password is not correct" })
         }
 
         let token = jwt.sign(
