@@ -1,6 +1,7 @@
 const reviewsModel = require('../modules/ReviewModel')
 const booksModel = require('../modules/BooksModel')
 const validation = require('../utility/validation')
+const { isValidObjectId } = require("../utility/validation")
 
 
 //=====================================================[CREATE REVIEW API]============================================================
@@ -8,6 +9,11 @@ const create = async (req, res) => {
     try {
         // get book id
         const bookId = req.params.bookId
+        //check valid Book ID
+        if (!isValidObjectId(bookId)) return res.status(400).send({
+            status: false,
+            message: "BookId invalid"
+        })
         // get review data from body
         const revData = req.body
         if (!validation.isValidRequestBody(revData)) return res.status(400).send({
@@ -23,17 +29,14 @@ const create = async (req, res) => {
         } = revData
 
         // VALIDATION
-        if (Object.keys(revData).indexOf("reviewedBy") !== -1) {
-            if (validation.isEmpty(reviewedBy)) {
-                reviewedBy = "Guest"
-            }
+        if (validation.isEmpty(reviewedBy)) {
+            reviewedBy = "Guest"
         }
 
         if (validation.isEmpty(rating)) return res.status(400).send({
             status: false,
             message: 'Rating is required!'
         })
-
         // Rating must be in 1 to 5
         if (typeof rating !== 'number') return res.status(400).send({ Status: false, message: "rating must be number only" })
         if (rating < 1 || rating > 5) return res.status(400).send({
@@ -41,14 +44,11 @@ const create = async (req, res) => {
             message: 'Rating must be in 1 to 5!'
         })
 
-      //
-            if (validation.isEmpty(review)) {
-                return res.status(404).send({
-                    status: false,
-                    message: "Declared review is empty, You need to add some value"
-                })
-            }
-        
+        if (Object.keys(revData).indexOf("review") !== -1) {
+            if (validation.isEmpty(review)) return res.status(400).send({
+                status: false, message: "Declared review is empty, You need to add some value"
+            })
+        }
 
         // check book from db ---
         const isBook = await booksModel.findById(bookId).catch(_ => null)
@@ -82,7 +82,6 @@ const create = async (req, res) => {
             await isBook.save();//The save() method is asynchronous, so it returns a promise that you can await on.
         }
 
-
         res.status(201).send({
             status: true,
             data: await bookWithReviewList(bookId)
@@ -105,8 +104,16 @@ const update = async (req, res) => {
 
         // get book id
         const bookId = req.params.bookId
+        if (!isValidObjectId(bookId)) return res.status(400).send({
+            status: false,
+            message: "BookId invalid"
+        })
         // get review id id
         const reviewId = req.params.reviewId
+        if (!isValidObjectId(reviewId)) return res.status(400).send({
+            status: false,
+            message: "ReviewId invalid"
+        })
         // get revirw data from body for updata
         const dataForUpdate = req.body
         // dataForUpdate is valid or not
@@ -203,8 +210,16 @@ const deleted = async (req, res) => {
     try {
         // get book id
         const bookId = req.params.bookId
+        if (!isValidObjectId(bookId)) return res.status(400).send({
+            status: false,
+            message: "BookId invalid"
+        })
         // get review id id
         const reviewId = req.params.reviewId
+        if (!isValidObjectId(reviewId)) return res.status(400).send({
+            status: false,
+            message: "ReviewId invalid"
+        })
 
         // check book from db ---
         const isBook = await booksModel.findById(bookId).catch(_ => null)

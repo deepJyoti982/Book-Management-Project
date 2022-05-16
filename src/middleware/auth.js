@@ -2,6 +2,7 @@ const validation = require('../utility/validation')
 const booksModel = require('../modules/BooksModel')
 const UserModel = require('../modules/UserModel')
 const jwt = require('jsonwebtoken')
+const { isValidObjectId } = require("../utility/validation")
 
 //authentication
 
@@ -76,6 +77,11 @@ const bookAuthorization = async (req, res, next) => {
     try {
         // get book from params
         const bookId = req.params.bookId
+        //checking valid BOOKID
+        if (!isValidObjectId(bookId)) return res.status(400).send({
+            status: false,
+            message: "BookId invalid"
+        })
 
         // check book exist or not
         let validBookId = await booksModel.findById(bookId).catch(err => null)

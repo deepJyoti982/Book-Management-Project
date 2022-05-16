@@ -152,6 +152,7 @@ const getBook = async function (req, res) {
                 subcategory
             } = queryData;
 
+            if (!isValidObjectId(userId)) return res.status(400).send({ status: false, message: "Invalid userId" })
             if (!isEmpty(userId)) {
                 obj.userId = userId
             }
@@ -167,11 +168,11 @@ const getBook = async function (req, res) {
 
 
         let findQuery = await BooksModel.find(obj).select({
-            ISBN:0,
-            subcategory:0,
-            isDeleted:0,
-            createdAt:0,
-            updatedAt:0,
+            ISBN: 0,
+            subcategory: 0,
+            isDeleted: 0,
+            createdAt: 0,
+            updatedAt: 0,
             __v: 0
         }).sort({
             title: 1
@@ -201,14 +202,19 @@ const getBook = async function (req, res) {
 const getBookById = async (req, res) => {
     try {
         const bookId = req.params.bookId
-
+        //checking valid book id
+        if (!isValidObjectId(bookId)) return res.status(400).send({
+            status: false,
+            message: "BookId invalid"
+        })
+        // checking book present in db
         const data = await BooksModel.findOne({
             _id: bookId
         }).catch(e => null)
 
         if (!data) return res.status(404).send({
             status: false,
-            message: "Book does not exist or bookID invalid"
+            message: "Book does not exist"
         })
 
         if (data.isDeleted) return res.status(404).send({
@@ -262,6 +268,7 @@ const bookUpdate = async (req, res) => {
         let bookId = req.params.bookId
         let updateData = req.body
         let userId = req.decodeToken.userId
+
         let {
             title,
             excerpt,
@@ -347,11 +354,11 @@ const delBookById = async (req, res) => {
     try {
         let userId = req.decodeToken.userId
         let bookId = req.params.bookId
-        //check valid book id
+        //check book id in db
         let validBookId = await BooksModel.findById(bookId).catch(err => null)
         if (!validBookId) return res.status(404).send({
             status: false,
-            message: "Book not found or BookId is invalid !"
+            message: "Book not found"
         })
         if (validBookId.isDeleted) return res.status(404).send({
             status: false,
@@ -373,13 +380,7 @@ const delBookById = async (req, res) => {
 
         // Deletion of reviews if book is deleted
         if (deletion) {
-            await reviewsModel.updateMany({
-                bookId
-            }, {
-                $set: {
-                    isDeleted: true
-                }
-            })
+            await reviewsModel.updateMany({ bookId }, { $set: { isDeleted: true } })
         }
         res.status(200).send({
             status: true,
