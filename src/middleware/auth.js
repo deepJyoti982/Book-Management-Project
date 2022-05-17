@@ -96,7 +96,7 @@ const bookAuthorization = async (req, res, next) => {
         //console.log(userId)
 
         // check authorised user
-        if (validBookId.userId.toString() !== userId) return res.status(403).send({
+        if (validBookId.userId.toString() !== userId) return res.status(401).send({
             status: false,
             message: 'Unauthorised user!'
         }) //if Unauthorised user
@@ -110,6 +110,25 @@ const bookAuthorization = async (req, res, next) => {
     }
 }
 
+const reviewAuthorization = async function ( req, res,next) {
+    try {
+        const bookId = req.params.bookId;
+        const userId = req.decodeToken.userId;
+    
+        if(!isValidObjectId(bookId)) return res.status( 400 ).send({status: false, msg: "Book Id is Invalid"})
+    
+        const isPresentId = await booksModel.findById(bookId)
+        if(!isPresentId) return res.send( 404 ).send({status: false, msg: "no such book found"})
+    
+        if(isPresentId.userId.toString() !== userId) return res.status( 401 ).send({status: false, msg: "Unauthorized-User"})
+    
+        next()
+    }
+    catch(error) {
+        res.status( 500 ).send({status: false, msg: error.message})
+    }
+}
+
 
 
 
@@ -119,5 +138,6 @@ const bookAuthorization = async (req, res, next) => {
 module.exports = {
     authenticate,
     userAuthrization,
-    bookAuthorization
+    bookAuthorization,
+    reviewAuthorization
 }

@@ -1,6 +1,5 @@
 const BooksModel = require("../modules/BooksModel");
-const reviewsModel = require("../modules/ReviewModel");
-
+const UserModel = require("../modules/UserModel");
 const moment = require('moment')
 
 //destructure of validation.js
@@ -13,27 +12,33 @@ const {
     isValidISBN
 } = require("../utility/validation")
 
-//====================================================[API TO CREATE BOOK]==========================================================
+
+/*
+    create book api --------------------------------------------------------------------
+*/
+
 const createBook = async (req, res) => {
     try {
         const data = req.body;
+        const useridfromtoken = req.decodeToken.userId
+        //console.log(req.decodeToken.userId)
 
         if (!isValidRequestBody(data)) return res.status(400).send({
             status: false,
             message: "Body Empty"
         })
 
-        let {
+        const {
             title,
             ISBN,
             releasedAt,
             category,
             userId,
             subcategory,
+            reviews,
             excerpt
         } = data;
 
-        //Validations...
         if (isEmpty(releasedAt)) {
             releasedAt = moment(releasedAt).format("YYYY-MM-DD")
         } else {
@@ -87,10 +92,25 @@ const createBook = async (req, res) => {
 
         if (!isValidISBN(ISBN)) return res.status(400).send({
             status: false,
-            message: "Enter a valid ISBN Number"
+            message: "ISBN must be number"
         })
 
+        // check userid with token user id
+        if (userId !== useridfromtoken) return res.status(401).send({
+            status: false,
+            message: "User un-authorised"
+        })
+
+
+
         // DB Calls
+        const isIdExist = await UserModel.findOne({
+            _id: userId
+        }).catch(e => null);
+        if (!isIdExist) return res.status(404).send({
+            status: false,
+            message: "User Id does not exist"
+        })
 
         const isTitleUnique = await BooksModel.findOne({
             title
@@ -108,15 +128,15 @@ const createBook = async (req, res) => {
             message: "ISBN already exist"
         })
 
-        //Book creation
         const createBook = await BooksModel.create({
             title,
-            excerpt,
-            userId,
             ISBN,
-            category,
-            subcategory,
             releasedAt: moment(releasedAt).format("YYYY-MM-DD"),
+            category,
+            userId,
+            subcategory,
+            reviews,
+            excerpt
         })
 
         return res.status(201).send({
@@ -134,9 +154,10 @@ const createBook = async (req, res) => {
 }
 
 
-//==============================[GET BOOK API]==========================================
+//============================== Get book api===========================================
 
 const getBook = async function (req, res) {
+
     try {
         const queryData = req.query;
 
@@ -147,17 +168,16 @@ const getBook = async function (req, res) {
         if (Object.keys(queryData).length !== 0) {
 
             let {
+                title,
                 userId,
-                category,
                 subcategory
             } = queryData;
 
-            if (!isValidObjectId(userId)) return res.status(400).send({ status: false, message: "Invalid userId" })
+            if (!isEmpty(title)) {
+                obj.title = title
+            }
             if (!isEmpty(userId)) {
                 obj.userId = userId
-            }
-            if (!isEmpty(category)) {
-                obj.category = category
             }
             if (!isEmpty(subcategory)) {
                 obj.subcategory = {
@@ -166,17 +186,8 @@ const getBook = async function (req, res) {
             }
         }
 
-
-        let findQuery = await BooksModel.find(obj).select({
-            ISBN: 0,
-            subcategory: 0,
-            isDeleted: 0,
-            createdAt: 0,
-            updatedAt: 0,
-            __v: 0
-        }).sort({
-            title: 1
-        })
+        // console.log(obj)
+        let findQuery = await BooksModel.find(obj)
         if (findQuery.length == 0) {
             return res.status(404).send({
                 status: false,
@@ -188,7 +199,8 @@ const getBook = async function (req, res) {
             data: findQuery
         })
 
-    } catch (error) {
+    } 
+    catch (error) {
         res.status(500).send({
             status: false,
             message: error.message
@@ -197,17 +209,12 @@ const getBook = async function (req, res) {
 }
 
 
-// =============================[GET BOOK BY BOOK-ID]============================
+// ============================= Get Book by Id ============================
 
 const getBookById = async (req, res) => {
     try {
         const bookId = req.params.bookId
-        //checking valid book id
-        if (!isValidObjectId(bookId)) return res.status(400).send({
-            status: false,
-            message: "BookId invalid"
-        })
-        // checking book present in db
+
         const data = await BooksModel.findOne({
             _id: bookId
         }).catch(e => null)
@@ -221,7 +228,7 @@ const getBookById = async (req, res) => {
             status: false,
             message: "Book already deleted"
         })
-
+        
         let obj = {
             _id: data._id,
             title: data.title,
@@ -237,16 +244,7 @@ const getBookById = async (req, res) => {
             updatedAt: data.updatedAt
         }
 
-        // get arr of reviews
-        const reviewArr = await reviewsModel.find({
-            bookId: data._id,
-            isDeleted: false
-        }).select({
-            __v: 0,
-            isDeleted: 0
-        }).catch(_ => [])
-
-        obj.reviewsData = reviewArr;
+        obj.reviewsData = []
 
         return res.status(200).send({
             status: true,
@@ -262,13 +260,12 @@ const getBookById = async (req, res) => {
 }
 
 
-//==========================================================[BOOK UPDATE API]===========================================================
+//==========================================================book update api===========================================================
 const bookUpdate = async (req, res) => {
     try {
         let bookId = req.params.bookId
         let updateData = req.body
         let userId = req.decodeToken.userId
-
         let {
             title,
             excerpt,
@@ -280,11 +277,7 @@ const bookUpdate = async (req, res) => {
             _id: bookId,
             userId: userId
         }).catch(err => null)
-
-        if (!validBook) return res.status(404).send({
-            status: false,
-            message: "Book not found"
-        })
+        //console.log(validBook)
 
         if (validBook.isDeleted) return res.status(404).send({
             status: false,
@@ -324,13 +317,13 @@ const bookUpdate = async (req, res) => {
             if (checkISBN) {
                 return res.status(400).send({
                     status: false,
-                    message: "ISBN is already exits plz enter a new ISBN"
+                    message: "ISBN is already exits plz enter a new title"
                 })
             } else {
                 validBook.ISBN = ISBN
             }
         }
-        await validBook.save();
+        validBook.save();
         res.status(200).send({
             status: true,
             message: "Update succesful",
@@ -340,51 +333,45 @@ const bookUpdate = async (req, res) => {
     } catch (error) {
         return res.status(500).send({
             status: false,
+            msg: "hlw error",
             message: error.message
         })
 
     }
 }
 
+ 
 
-
-//===================================[DELETE BOOK API]==========================================
+//============================= delete book api==========================================
 
 const delBookById = async (req, res) => {
     try {
         let userId = req.decodeToken.userId
         let bookId = req.params.bookId
-        //check book id in db
+        //check valid book id
         let validBookId = await BooksModel.findById(bookId).catch(err => null)
-        if (!validBookId) return res.status(404).send({
-            status: false,
-            message: "Book not found"
-        })
         if (validBookId.isDeleted) return res.status(404).send({
             status: false,
             message: "Book is already Deleted"
         })
         //Doing changes in book document
-        let deletion = await BooksModel.findOneAndUpdate({
+        let deletion = await BooksModel.updateOne({
             _id: bookId,
             userId: userId
         }, {
             $set: {
                 isDeleted: true,
-                deletedAt: new Date(),
-                reviews: 0
+                deletedAt: new Date()
             }
-        }).select({
-            __v: 0
+        }, {
+            new: true
         })
-
-        // Deletion of reviews if book is deleted
-        if (deletion) {
-            await reviewsModel.updateMany({ bookId }, { $set: { isDeleted: true } })
-        }
         res.status(200).send({
             status: true,
-            message: 'Book deleted successfully '
+            message: 'Success',
+            data: {
+                deletion
+            }
         })
     } catch (er) {
         res.status(500).send({
