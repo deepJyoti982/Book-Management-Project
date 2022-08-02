@@ -46,7 +46,7 @@ const create = async (req, res) => {
 
         if (Object.keys(revData).indexOf("review") !== -1) {
             if (validation.isEmpty(review)) return res.status(400).send({
-                status: false, message: "Declared review is empty, You need to add some value"
+                status: false, message: "review field is empty, please add your review"
             })
         }
 

@@ -1,4 +1,5 @@
 const mongoose = require('mongoose')
+const { stringify } = require('nodemon/lib/utils')
 const ObjectId = mongoose.Schema.Types.ObjectId
 
 const bookSchema = new mongoose.Schema({
@@ -33,6 +34,10 @@ const bookSchema = new mongoose.Schema({
         type: [String],
         trim:true,
         required: 'Subcategory must be required',
+    },
+    bookCover: {
+        type: string,
+        required: true
     },
     reviews: {
         type: Number,
